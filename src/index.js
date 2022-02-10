@@ -1,3 +1,6 @@
-import SomeComponent from './components/SomeComponent';
+import AppRoot from './components/Root';
 
-console.log('hello world', { SomeComponent });
+const App = new AppRoot('app');
+window.App = App;
+
+App.render();
