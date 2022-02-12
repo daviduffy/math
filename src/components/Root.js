@@ -1,32 +1,56 @@
+import Engine from '../engine/engine';
+import Component from '../engine/Component';
 import Style from '../scss/index.scss';
-import { h } from '../engine/engine';
 
-class Component {
-  constructor(rootId) {
+const { h, render, createElement } = Engine;
+
+class App extends Component {
+  constructor() {
+    super();
     this.state = {
       planet: 'Mars',
+      count: 0,
     }
 
-    this.root = document.getElementById(rootId);
-    this.app = 'window.App';
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick() {
-    console.log('click');
+  handleClick(e, delta) {
+    const newCount = this.state.count + delta;
+    this.setState({ count: newCount });
+    Engine.render(this.template());
   }
 
   template() {
-    // const el = h('div', { class: 'container'},
-    //   h('p', null, 'I am some text')
+    const template = createElement({
+      tag: 'div',
+      attr: { class: 'container' },
+      children: [
+        createElement({
+          tag: 'p',
+          children: this.state.count
+        }),
+        createElement({
+          tag: 'button',
+          attr: { onclick: (e) => this.handleClick(e, 1) },
+          children: '+'
+        }),
+        createElement({
+          tag: 'button',
+          attr: { onclick: (e) => this.handleClick(e, -1) },
+          children: '-'
+        })
+      ]
+    });
+    console.log(template);
+    // const template = h('div', { class: 'container' }, 
+      // h('p', null, 'I am some text'),
+      // h('p', null, this.state.count),
+      // h('button', { onclick: (e) => this.handleClick(e, 1) }, '+'),
+      // h('button', { onclick: (e) => this.handleClick(e, -1) }, '-')
     // );
-    // console.log(el);
-    return h('button', { onclick: this.handleClick }, 'click me');
-  }
-
-  render() {
-    this.root.innerHTML = '';
-    this.root.appendChild(this.template());
+    return template;
   }
 }
 
-export default Component;
+export default App;
