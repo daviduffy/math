@@ -1,8 +1,6 @@
-import Engine from '../engine/engine';
+import { h, render, createElement, updateElement } from '../engine/engine';
 import Component from '../engine/Component';
 import Style from '../scss/index.scss';
-
-const { h, render, createElement } = Engine;
 
 class App extends Component {
   constructor() {
@@ -11,45 +9,36 @@ class App extends Component {
       planet: 'Mars',
       count: 0,
     }
-
+    this.$root = null;
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(e, delta) {
     const newCount = this.state.count + delta;
     this.setState({ count: newCount });
-    Engine.render(this.template());
+    this.render();
   }
 
   template() {
-    const template = createElement({
-      tag: 'div',
-      attr: { class: 'container' },
-      children: [
-        createElement({
-          tag: 'p',
-          children: this.state.count
-        }),
-        createElement({
-          tag: 'button',
-          attr: { onclick: (e) => this.handleClick(e, 1) },
-          children: '+'
-        }),
-        createElement({
-          tag: 'button',
-          attr: { onclick: (e) => this.handleClick(e, -1) },
-          children: '-'
-        })
-      ]
-    });
-    console.log(template);
-    // const template = h('div', { class: 'container' }, 
-      // h('p', null, 'I am some text'),
-      // h('p', null, this.state.count),
-      // h('button', { onclick: (e) => this.handleClick(e, 1) }, '+'),
-      // h('button', { onclick: (e) => this.handleClick(e, -1) }, '-')
-    // );
-    return template;
+    return h('div', { class: 'container' },
+      h('p', {}, (this.state.count).toString()),
+      h('button', { onclick: (e) => this.handleClick(e, 1) }, '+'),
+      h('button', { onclick: (e) => this.handleClick(e, -1) }, '-')
+    );
+  }
+
+  start($root) {
+    this.$root = $root;
+    this.$vdom = this.template();
+    updateElement(this.$root, this.template());
+    // console.log(createElement(this.template()));
+  }
+
+  render() {
+    const newNode = this.template();
+    const oldNode = this.$vdom;
+    updateElement(this.$root, newNode, oldNode);
+    this.$vdom = newNode;
   }
 }
 
