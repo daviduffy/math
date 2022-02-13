@@ -1,6 +1,6 @@
-import AppRoot from './components/Root';
-import { h, renderDOM } from './engine/engine';
+import AppRoot from './components/Root.jsx';
+import Engine from './engine/engine';
 
 const App = new AppRoot();
 const appRoot = document.getElementById('app');
-App.start(appRoot);
+Engine.start(appRoot, App.template());
